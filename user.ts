@@ -1,13 +1,32 @@
 import { AbstractApi, Credentials } from "./api.ts";
 
 export interface Device {
-    type: string;
-    // TODO: add remaining
+    type:
+        | "Scale"
+        | "Babyphone"
+        | "Blood Pressure Monitor"
+        | "Activity Tracker"
+        | "Sleep Monitor"
+        | "Smart Connected Thermometer"
+        | "Gateway";
+    model: string;
+    model_id: number;
+    battery: string;
+    deviceid: string;
+    hash_deviceid: string;
+    timezone: string;
+    last_session_date: number;
 }
 
 export interface Goal {
     steps: number;
-    // TODO: add remaining
+    sleep: number;
+    weight: Weight;
+}
+
+export interface Weight {
+    value: number;
+    unit: number;
 }
 
 export class UserApi extends AbstractApi {
@@ -20,7 +39,8 @@ export class UserApi extends AbstractApi {
         return devices;
     }
 
-    async getGoals() {
-        return await this.call("user", "getgoals");
+    async getGoals(): Promise<Goal[]> {
+        const { goals } = await this.call("user", "getgoals");
+        return goals;
     }
 }
