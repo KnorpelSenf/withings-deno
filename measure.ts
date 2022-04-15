@@ -38,7 +38,17 @@ export class MeasureApi extends AbstractApi {
         offset?: number;
         lastupdate?: number;
     }): Promise<Measure> {
-        return await this.call("measure", "getmeas", parameters);
+        const params = {
+            ...(Array.isArray(parameters.type)
+                ? { meastypes: parameters.type.join() }
+                : { meastype: parameters.type }),
+            category: parameters.category,
+            startdate: parameters.startdate,
+            enddate: parameters.enddate,
+            lastupdate: parameters.lastupdate,
+            offset: parameters.offset,
+        };
+        return await this.call("measure", "getmeas", params);
     }
 
     async *streamMeasures(parameters: Parameters<this["getMeasure"]>[0]) {
