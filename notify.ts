@@ -10,7 +10,7 @@ export interface NotificationProfile extends Notification {
     expires: number;
 }
 
-export class NotiryApi extends AbstractApi {
+export class NotifyApi extends AbstractApi {
     constructor(credentials: Credentials) {
         super(credentials);
     }
