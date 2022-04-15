@@ -60,21 +60,24 @@ export async function callApi<M extends keyof Actions, A extends Actions[M]>(
     parameters?: Record<string, unknown>,
     credentials?: Credentials,
 ) {
-    const params = new URLSearchParams({ action, ...parameters });
-    const url = `${BASE_URL}/${method}?${params.toString()}`;
+    const formData = Object
+        .entries({ action, ...parameters })
+        .filter(([, v]) => v != null)
+        .reduce((fd, [k, v]) => (fd.append(k, v), fd), new FormData());
+    const url = `${BASE_URL}/${method}`;
     const token = await getBearer(credentials);
-
     const response = await fetch(url, {
         method: "POST",
         headers: token === undefined
             ? {}
             : { "Authorization": `Bearer ${token}` },
+        body: formData,
     });
     const json = await response.json();
-    const { status, body } = json;
+    const { status, body, error } = json;
     if (status !== 0) {
         throw new ApiError(
-            `Call to /${method} with action ${action} failed with status code ${status}`,
+            `Call to /${method} with action ${action} failed with status ${status}: ${error}`,
             { parameters, response: json },
         );
     }
