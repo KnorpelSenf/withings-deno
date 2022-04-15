@@ -3,6 +3,10 @@ import { ALL_SCOPES, type ApiScope, AUTH_URL, BASE_URL } from "./constants.ts";
 interface Actions {
     oauth2: "requesttoken";
     user: "getdevice" | "getgoals";
+    measure: "getmeas" | "getactivity" | "getintradayactivity" | "getworkouts";
+    heart: "get" | "list";
+    sleep: "get" | "getsummary";
+    notify: "get" | "list" | "revoke" | "subscribe" | "update";
 }
 
 export class ApiError extends Error {
