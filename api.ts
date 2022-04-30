@@ -86,19 +86,28 @@ export async function callApi<M extends keyof Actions, A extends Actions[M]>(
 
 export type RefreshListener = (data: Credentials) => unknown | Promise<unknown>;
 
+export interface TokenData {
+    userId: string;
+    accessToken: string;
+    refreshToken: string;
+    expires: number;
+}
+
 export class Credentials {
     private listeners: RefreshListener[] = [];
 
     constructor(
         public readonly clientId: string,
         public readonly clientSecret: string,
+        public userId: string,
         public accessToken: string,
         public refreshToken: string,
         public expires: number,
     ) {}
 
-    toTokenData() {
+    toTokenData(): TokenData {
         return {
+            userId: this.userId,
             accessToken: this.accessToken,
             refreshToken: this.refreshToken,
             expires: this.expires,
@@ -107,15 +116,12 @@ export class Credentials {
     static fromTokenData(
         clientId: string,
         clientSecret: string,
-        tokenData: {
-            accessToken: string;
-            refreshToken: string;
-            expires: number;
-        },
+        tokenData: TokenData,
     ) {
         return new Credentials(
             clientId,
             clientSecret,
+            tokenData.userId,
             tokenData.accessToken,
             tokenData.refreshToken,
             tokenData.expires,
@@ -172,6 +178,7 @@ export interface ConnectConfig {
 export async function connect(config: ConnectConfig) {
     const { clientId, clientSecret, redirectUri, authorizationCode } = config;
     const {
+        userid: userId,
         access_token: accessToken,
         refresh_token: refreshToken,
         expires_in: expiresIn, // seconds
@@ -186,6 +193,7 @@ export async function connect(config: ConnectConfig) {
     return new Credentials(
         clientId,
         clientSecret,
+        userId,
         accessToken,
         refreshToken,
         expires,
