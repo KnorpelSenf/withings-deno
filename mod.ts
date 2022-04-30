@@ -6,6 +6,7 @@ export {
     Credentials,
     getConnectUrl,
     type RefreshListener,
+    type TokenData,
 } from "./api.ts";
 export * from "./heart.ts";
 export * from "./measure.ts";
